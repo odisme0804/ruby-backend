@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  topic: MyString
+  description: MyString
+  price: 1
+  currency: MyString
+  type: 
+  url: MyString
+  expiration: MyString
+
+two:
+  topic: MyString
+  description: MyString
+  price: 1
+  currency: MyString
+  type: 
+  url: MyString
+  expiration: MyString
