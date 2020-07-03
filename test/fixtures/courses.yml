@@ -1,19 +1,37 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  topic: MyString
-  description: MyString
-  price: 1
-  currency: MyString
-  type: 
-  url: MyString
-  expiration: MyString
+ruby:
+  topic: ruby
+  description: ruby tutorial
+  price: 100
+  currency: NTD
+  category: computer_science
+  url: https://course_url.com.tw/ruby
+  expiration: 86400
 
-two:
-  topic: MyString
-  description: MyString
-  price: 1
-  currency: MyString
-  type: 
-  url: MyString
-  expiration: MyString
+ror:
+  topic: ruby on rails
+  description: ror tutorial
+  price: 200
+  currency: NTD
+  category: computer_science
+  url: https://course_url.com.tw/ror
+  expiration: 86400
+
+chinese-101:
+  topic: chinese-101
+  description: how to say chinese
+  price: 9.99
+  currency: USD
+  category: foreign_language
+  url: https://course_url.com.tw/ruby
+  expiration: 3600
+
+fashion-101:
+  topic: what is fashion
+  description: what is fashion and how to be a fashionable people
+  price: 5
+  currency: EUR
+  category: computer_science
+  url: https://course_url.com.tw/ror
+  expiration: 86400
