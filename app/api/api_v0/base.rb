@@ -3,5 +3,6 @@ module ApiV0
     version 'v0', using: :path
   
     mount Ping
+    mount Courses
   end
 end
