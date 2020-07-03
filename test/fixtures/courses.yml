@@ -8,6 +8,7 @@ ruby:
   category: computer_science
   url: https://course_url.com.tw/ruby
   expiration: 86400
+  available: true
 
 ror:
   topic: ruby on rails
@@ -17,6 +18,7 @@ ror:
   category: computer_science
   url: https://course_url.com.tw/ror
   expiration: 86400
+  available: true
 
 chinese-101:
   topic: chinese-101
@@ -26,6 +28,7 @@ chinese-101:
   category: foreign_language
   url: https://course_url.com.tw/ruby
   expiration: 3600
+  available: true
 
 fashion-101:
   topic: what is fashion
@@ -35,3 +38,4 @@ fashion-101:
   category: computer_science
   url: https://course_url.com.tw/ror
   expiration: 86400
+  available: true
