@@ -7,6 +7,9 @@ module ApiV0
       end
 
       desc "Get course by id"
+      params do
+        requires :id, type: String, desc: 'Course ID'
+      end
       get "/:id" do
         Course.find(params[:id])
       end
@@ -58,13 +61,12 @@ module ApiV0
       end
       delete "/:id" do
         course = Course.find(params[:id])
-
         if course.destroy
           return course
         else
           raise StandardError, $!
         end
       end
-    end
+    end # resource end
   end
 end
