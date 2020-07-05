@@ -35,7 +35,7 @@ fashion-101:
   description: what is fashion and how to be a fashionable people
   price: 5
   currency: EUR
-  category: computer_science
+  category: fashion
   url: https://course_url.com.tw/ror
   expiration: 86400
   available: true
