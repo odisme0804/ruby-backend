@@ -1,3 +1,3 @@
 class Course < ApplicationRecord
-    has_many :records
+    has_many :purchase_records
 end

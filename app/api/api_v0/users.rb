@@ -5,14 +5,14 @@ module ApiV0
         authenticate!
         unless current_user
           status 403
-          return{ error: 'forbidden' }
+          return { error: 'forbidden' }
         end
         params do
           optional :available, type: Boolean
           optional :category, type: String
         end
 
-        records = Record.joins(:course).includes(:course).where(user_id: current_user.id)
+        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id)
         if params[:category]
           records = records.where("courses.category = ?", params[:category])
         end
@@ -29,7 +29,7 @@ module ApiV0
         authenticate!
         unless current_user.try(:admin)
           status 403
-          return{ error: 'forbidden' }
+          return { error: 'forbidden' }
         end
         User.all
       end
@@ -79,13 +79,13 @@ module ApiV0
         authenticate!
         unless current_user.try(:admin)
           status 403
-          return{ error: 'forbidden' }
+          return { error: 'forbidden' }
         end
         params do
           optional :available, type: Boolean
           optional :category, type: String
         end
-        records = Record.joins(:course).includes(:course).where(user_id: params[:id])
+        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: params[:id])
         if params[:category]
           records = records.where("courses.category = ?", params[:category])
         end
