@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_04_061728) do
+ActiveRecord::Schema.define(version: 2020_07_06_141650) do
 
   create_table "courses", force: :cascade do |t|
     t.string "topic"
@@ -25,12 +25,13 @@ ActiveRecord::Schema.define(version: 2020_07_04_061728) do
     t.boolean "available"
   end
 
-  create_table "records", force: :cascade do |t|
+  create_table "purchase_records", force: :cascade do |t|
     t.integer "user_id"
     t.integer "course_id"
     t.string "expired_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "pay_by"
   end
 
   create_table "users", force: :cascade do |t|

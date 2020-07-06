@@ -3,15 +3,24 @@
 user_1_course_1:
   user_id: 135138680
   course_id: 207281424
+  pay_by: "ibon"
   expired_at: "2020-08-30 10:00:00"
 
 user_1_course_2:
   user_id: 135138680
   course_id: 520386015
+  pay_by: "visa"
   expired_at: "2020-07-30 10:00:00"
 
 user_1_course_3:
   user_id: 135138680
   course_id: 878314071
+  pay_by: "apple pay"
   expired_at: "2020-06-30 10:00:00"
+
+user_1_course_4:
+  user_id: 135138680
+  course_id: 698591932
+  pay_by: "free"
+  expired_at: "2020-05-30 10:00:00"
 

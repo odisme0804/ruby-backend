@@ -11,5 +11,6 @@ module ApiV0
     mount Ping
     mount Courses
     mount Users
+    mount PurchaseRecords
   end
 end
