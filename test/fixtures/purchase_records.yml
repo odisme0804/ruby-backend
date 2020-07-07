@@ -15,7 +15,7 @@ user_1_course_2:
 user_1_course_3:
   user_id: 135138680
   course_id: 878314071
-  pay_by: "apple pay"
+  pay_by: "apple_pay"
   expired_at: "2020-06-30 10:00:00"
 
 user_1_course_4:

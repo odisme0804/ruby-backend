@@ -1,9 +1,8 @@
 module ApiV0
   class PurchaseRecords < Grape::API
     resource :user do
-
       params do
-        requires :pay_by, type: String
+        requires :pay_by, values:  [:ibon, :visa, :apple_pay, :free], type: Symbol, allow_blank: false
       end
       post "/purchase-courses/:id" do
         authenticate!

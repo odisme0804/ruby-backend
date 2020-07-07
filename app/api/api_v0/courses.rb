@@ -47,7 +47,7 @@ module ApiV0
         requires :topic, values: ->(v) { v.length <= 20 }, type: String, allow_blank: false
         requires :description, values: ->(v) { v.length <= 20 }, type: String, allow_blank: false
         requires :price, type: Float, allow_blank: false
-        requires :currency, type: String, values: [:NTD, :USD, :EUR], allow_blank: false
+        requires :currency, type: Symbol, values: [:NTD, :USD, :EUR], allow_blank: false
         requires :category, type: String,allow_blank: false
         requires :url, type: String, allow_blank: false
         requires :expiration, values: 86400..86400*30, type: Integer, allow_blank: false
@@ -68,7 +68,7 @@ module ApiV0
         requires :topic, values: ->(v) { v.length <= 20 }, type: String, allow_blank: false
         requires :description, values: ->(v) { v.length <= 20 }, type: String, allow_blank: false
         requires :price, type: Float, allow_blank: false
-        requires :currency, type: String, values: [:NTD, :USD, :EUR], allow_blank: false
+        requires :currency, type: Symbol, values: [:NTD, :USD, :EUR], allow_blank: false
         requires :category, type: String,allow_blank: false
         requires :url, type: String, allow_blank: false
         requires :expiration, values: 86400..86400*30, type: Integer, allow_blank: false
