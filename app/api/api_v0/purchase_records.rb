@@ -13,13 +13,13 @@ module ApiV0
         end
 
         Course.transaction do 
-          course = Course.find(params[:id])
+          course = Course.lock("FOR UPDATE NOWAIT").find(params[:id])
           unless course.try(:available)
             status 404
             return { error: 'not found' }
           end
 
-          records = PurchaseRecord.joins(:course).includes(:course).
+          records = PurchaseRecord.lock("FOR UPDATE NOWAIT").joins(:course).includes(:course).
             where("user_id = ?", current_user.id).
             where("course_id = ?", params[:id]).
             where("expired_at >= ?", Time.now.utc)

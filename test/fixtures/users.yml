@@ -2,15 +2,15 @@
 
 admin:
   email: root@snapask.com
-  password_digest: "$2a$12$QUMQ0d6ddZUMjT6wCHHCY.mwkCFdS2Wa131b0D6BPBxLPBievUQSy"
+  password_digest: "$2a$12$ujJ1eEWsaujfLUAU/F3z3u2m2Kl07xGXyre4UHXvPRy42NHUpxxIe" # root
   admin: true
 
 user1:
   email: user1@gmail.com
-  password_digest: "$2a$12$k6FMDplqHib8.zs65CYqMeDA9HPfZgEeILyHL3JZieeGwDc21qlTe"
+  password_digest: "$2a$12$OECpEKSLUIw4zNyYRFqOhuZou9oewBcuZowqeJ2B8NijGVTyGXwZ2" # user
   admin: false
 
 user2:
   email: user2@gmail.com
-  password_digest: "$2a$12$k6FMDplqHib8.zs65CYqMeDA9HPfZgEeILyHL3JZieeGwDc21qlTe"
+  password_digest: "$2a$12$OECpEKSLUIw4zNyYRFqOhuZou9oewBcuZowqeJ2B8NijGVTyGXwZ2" # user
   admin: false
