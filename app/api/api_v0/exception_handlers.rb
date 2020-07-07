@@ -3,11 +3,11 @@ module ApiV0
     def self.included(base)
       base.instance_eval do
 
-        # 只要是 grape validation 沒有過的 Error 都返回自定義狀態碼 1001
+        # 只要是 grape validation 沒有過的 Error 都返回自定義狀態碼 10001
         rescue_from Grape::Exceptions::ValidationErrors do |e|
           rack_response({
             error: {
-              code: 1001,
+              code: 10001,
               message: e.message
             }
           }.to_json, e.status)
@@ -42,8 +42,20 @@ module ApiV0
 
   class AuthorizationError < Error
     def initialize
-      super code: 2001, text: 'Authorization failed', status: 401
+      super code: 40100, text: 'Authorization failed', status: 401
     end
   end # AuthorizationError < Error
+  
+  class LoginAuthorizationError < Error
+    def initialize
+      super code: 40101, text: 'Email not found or password not match', status: 401
+    end
+  end # LoginAuthorizationError < Error
+
+  class PermissionDeny < Error
+    def initialize
+      super code: 40300, text: 'Only admin can perform this operation', status: 403
+    end
+  end # PermissionDeny < Error
 
 end
