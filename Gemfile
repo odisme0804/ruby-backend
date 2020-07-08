@@ -9,6 +9,7 @@ gem 'jwt'
 gem 'bcrypt', '~> 3.1.7'
 
 gem "grape"
+gem "grape-entity"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.4', '>= 5.2.4.3'
 # Use sqlite3 as the database for Active Record

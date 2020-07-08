@@ -1,37 +1,10 @@
-# /user/courses
-module ApiV0
-  class Courses < Grape::API
-    resource :user do
-      get "/courses" do
-        authenticate!
-        unless current_user
-          status 403
-          return { error: 'forbidden' }
-        end
-        params do
-          optional :available, type: Boolean
-          optional :category, type: String
-        end
-        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id)
-        if params[:category]
-          records = records.where("courses.category = ?", params[:category])
-        end
-        if params[:available]
-          records = records.where("expired_at >= ?", Time.now.utc)
-        end
-          records.map { |obj| obj.course }
-      end
-    end
-  end
-end
-
 # /courses
 module ApiV0 
   class Courses < Grape::API
     resource :courses do
       desc "Get courses"
       get "/" do
-        Course.all
+        present Course.all, with: ApiV0::Entities::Course, type: :admin
       end
 
       desc "Get course by id"
@@ -39,7 +12,7 @@ module ApiV0
         requires :id, type: String, desc: 'Course ID'
       end
       get "/:id" do
-        Course.find(params[:id])
+        present Course.find(params[:id]), with: ApiV0::Entities::Course, type: :admin
       end
 
       desc "Create new course"
@@ -54,6 +27,7 @@ module ApiV0
         requires :available, type: Boolean, allow_blank: false
       end
       post "/" do
+        admin_authenticate!
         course = Course.new(declared(params))
         if course.save
           return course
@@ -75,7 +49,8 @@ module ApiV0
         requires :available, type: Boolean, allow_blank: false
       end
       put "/:id" do
-          course = Course.find(params[:id])
+        admin_authenticate!
+        course = Course.find(params[:id])
         if course.update(declared(params))
           return course
         else
@@ -88,6 +63,7 @@ module ApiV0
         requires :id, type: String, desc: 'Course ID'
       end
       delete "/:id" do
+        admin_authenticate!
         course = Course.find(params[:id])
         if course.destroy
           return course
@@ -96,5 +72,57 @@ module ApiV0
         end
       end
     end # resource end
+  end
+end
+
+# /user/courses
+module ApiV0
+  class Courses < Grape::API
+    resource :user do
+      get "/courses" do
+        authenticate!
+        unless current_user
+          status 403
+          return { error: 'forbidden' }
+        end
+        params do
+          optional :available, type: Boolean
+          optional :category, type: String
+        end
+        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id)
+        if params[:category]
+          records = records.where("courses.category = ?", params[:category])
+        end
+        if params[:available]
+          records = records.where("expired_at >= ?", Time.now.utc)
+        end
+
+        present records.map { |obj| obj.course }, with: ApiV0::Entities::Course
+      end
+    end
+  end
+end
+
+# /users/:id/courses
+module ApiV0
+  class Courses < Grape::API
+    resource :users do
+      get ":id/courses" do
+        admin_authenticate!
+        params do
+          optional :available, type: Boolean
+          optional :category, type: String
+        end
+        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: params[:id])
+        if params[:category]
+          records = records.where("courses.category = ?", params[:category])
+        end
+        if params[:available]
+          records = records.where("expired_at >= ?", Time.now.utc)
+        end
+        
+        present records.map { |obj| obj.course }, with: ApiV0::Entities::Course, type: :admin
+      end
+    end
   end
 end

@@ -1,11 +1,10 @@
-# /users
 module ApiV0
   class Users < Grape::API
     resource :users do
       desc "List users"
       get "/" do
         admin_authenticate!
-        User.all
+        present User.all, with: ApiV0::Entities::Course, type: :admin
       end
 
       desc "Create new user"
@@ -18,7 +17,7 @@ module ApiV0
         admin_authenticate!
         user = User.new(declared(params))
         if user.save
-          return user
+          present user, with: ApiV0::Entities::Course, type: :admin
         else
           raise StandardError, $!
         end
@@ -34,7 +33,7 @@ module ApiV0
       put "/:id" do
         user = User.find(params[:id])
         if user.update(declared(params))
-          return user
+          present user, with: ApiV0::Entities::Course, type: :admin
         else
           raise StandardError, $!
         end
@@ -50,34 +49,12 @@ module ApiV0
         if user
           token = JsonWebToken.encode(id: user.id)
           time = Time.now + 24.hours.to_i
-          { token: token, exp: time.strftime("%Y-%m-%dT%H:%M:%S")}
+          loginRsp = { token: token, exp: time}
+          present loginRsp, with: ApiV0::Entities::LoginRsp
         else
           raise LoginAuthorizationError
         end
       end
     end # resource end
-  end
-end
-
-# /users/:id/courses
-module ApiV0
-  class Users < Grape::API
-    resource :users do
-      get ":id/courses" do
-        admin_authenticate!
-        params do
-          optional :available, type: Boolean
-          optional :category, type: String
-        end
-        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: params[:id])
-        if params[:category]
-          records = records.where("courses.category = ?", params[:category])
-        end
-        if params[:available]
-          records = records.where("expired_at >= ?", Time.now.utc)
-        end
-        records.map { |obj| obj.course }
-      end
-    end
   end
 end
