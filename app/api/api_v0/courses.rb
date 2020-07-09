@@ -4,6 +4,8 @@ module ApiV0
     resource :courses do
       desc "Get courses"
       get "/" do
+        # TODO: paginator
+        admin_authenticate!
         present Course.all, with: ApiV0::Entities::Course, type: :admin
       end
 
@@ -12,6 +14,7 @@ module ApiV0
         requires :id, type: String, desc: 'Course ID'
       end
       get "/:id" do
+        admin_authenticate!
         present Course.find(params[:id]), with: ApiV0::Entities::Course, type: :admin
       end
 
@@ -21,7 +24,7 @@ module ApiV0
         requires :description, values: ->(v) { v.length <= 20 }, type: String, allow_blank: false
         requires :price, type: Float, allow_blank: false
         requires :currency, type: Symbol, values: [:NTD, :USD, :EUR], allow_blank: false
-        requires :category, type: String,allow_blank: false
+        requires :category, type: String, allow_blank: false
         requires :url, type: String, allow_blank: false
         requires :expiration, values: 86400..86400*30, type: Integer, allow_blank: false
         requires :available, type: Boolean, allow_blank: false
@@ -30,7 +33,8 @@ module ApiV0
         admin_authenticate!
         course = Course.new(declared(params))
         if course.save
-          return course
+          createRsp = { location: "/api/v0/courses/"+course.id.to_s, created_at: course.created_at}
+          present createRsp, with: ApiV0::Entities::CreateRsp
         else
           raise StandardError, $!
         end
@@ -52,7 +56,7 @@ module ApiV0
         admin_authenticate!
         course = Course.find(params[:id])
         if course.update(declared(params))
-          return course
+          status 204
         else
           raise StandardError, $!
         end
@@ -66,7 +70,7 @@ module ApiV0
         admin_authenticate!
         course = Course.find(params[:id])
         if course.destroy
-          return course
+          status 204
         else
           raise StandardError, $!
         end
