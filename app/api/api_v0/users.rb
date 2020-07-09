@@ -48,8 +48,7 @@ module ApiV0
         user = User.find_by(email: params[:email]).try(:authenticate, params[:password])
         if user
           token = JsonWebToken.encode(id: user.id)
-          time = Time.now + 24.hours.to_i
-          loginRsp = { token: token, exp: time}
+          loginRsp = { token: token, exp: 24.hours.from_now}
           present loginRsp, with: ApiV0::Entities::LoginRsp
         else
           raise LoginAuthorizationError
