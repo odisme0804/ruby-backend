@@ -1,4 +1,4 @@
-# HW-Snapask
+# Content Manager Backend With RoR
 
 A simple content manager backend api server with RoR and Grape.
 
@@ -14,6 +14,12 @@ rails s
 ```bash
 rails db:fixtures:load
 ```
+There are 3 accounts:
+\ | email | password | is_admin
+--- | --- | --- | ---
+root | root@gmail.com | root | true
+user1 | user1@gmail.com | user | false
+user2 | user2@gmail.com | user | false
 
 ## Login
   You need to get the auth token first for the following apis
@@ -21,7 +27,7 @@ rails db:fixtures:load
 curl -X POST \
   http://localhost:3000/api/v0/users/login \
   -H 'content-type: application/json' \
-  -d '{"email":"root@snapask.com","password":"root"}
+  -d '{"email":"root@gmail.com","password":"root"}
 '
 ```
 and you'll get the response like below
@@ -55,6 +61,14 @@ curl -X POST \
   }
 '
 ```
+return value
+```javascript
+{
+  "location": "/api/v0/courses/<course_id>",
+  "created_at": "2006-01-02T15:04:05Z"
+}
+```
+
 #### parameters:
 "topic": `string`, must in the range of 1 to 20 words.  
 "description": `string`,  must in the range of 1 to 20 words.  
@@ -65,6 +79,7 @@ curl -X POST \
 "expiration": `int`, the course available window in secound after purchasing, must in the range of 86400 to 86400*30.  
 "available": `boolean`, the course is available or not.
 
+#
 Update
 ```bash
 curl -X PUT \
@@ -83,9 +98,12 @@ curl -X PUT \
   }
 '
 ```
+
+
 #### parameters: 
 same as Create api
 
+#
 Delete
 ```bash
 curl -X DELETE \
@@ -94,6 +112,7 @@ curl -X DELETE \
   -H 'content-type: application/json'
 ```
 
+#
 Get
 ```bash
 curl -X GET \
@@ -102,12 +121,95 @@ curl -X GET \
   -H 'content-type: application/json'
 ```
 
+return value
+```javascript
+{
+    "course": {
+        "id": 207281424,
+        "topic": "ruby",
+        "description": "ruby tutorial",
+        "price": 100,
+        "currency": "NTD",
+        "category": "computer_science",
+        "url": "https://course_url.com.tw/ruby",
+        "expiration": 86400,
+        "available": true,
+        "created_at": "2020-07-11T08:44:19.991Z"
+    }
+}
+```
+
+#
 List
 ```bash
 curl -X GET \
   http://localhost:3000/api/v0/courses \
   -H 'authorization: your-token' \
   -H 'content-type: application/json'
+```
+#### query parameters:
+"limit": `int`, for paging, must between 1 to 50, default 10.  
+"offset": `int`, for paging, can't be negative, default 0.  
+
+return value
+```javascript
+{
+    "courses": [
+        {
+            "id": 207281424,
+            "topic": "ruby",
+            "description": "ruby tutorial",
+            "price": 100,
+            "currency": "NTD",
+            "category": "computer_science",
+            "url": "https://course_url.com.tw/ruby",
+            "expiration": 86400,
+            "available": true,
+            "created_at": "2020-07-11T08:44:19.991Z"
+        },
+        {
+            "id": 520386015,
+            "topic": "what is fashion",
+            "description": "what is fashion and how to be a fashionable people",
+            "price": 5,
+            "currency": "EUR",
+            "category": "fashion",
+            "url": "https://course_url.com.tw/ror",
+            "expiration": 86400,
+            "available": true,
+            "created_at": "2020-07-11T08:44:19.991Z"
+        },
+        {
+            "id": 698591932,
+            "topic": "chinese-101",
+            "description": "how to say chinese",
+            "price": 9.99,
+            "currency": "USD",
+            "category": "foreign_language",
+            "url": "https://course_url.com.tw/ruby",
+            "expiration": 3600,
+            "available": true,
+            "created_at": "2020-07-11T08:44:19.991Z"
+        },
+        {
+            "id": 878314071,
+            "topic": "ruby on rails",
+            "description": "ror tutorial",
+            "price": 200,
+            "currency": "NTD",
+            "category": "computer_science",
+            "url": "https://course_url.com.tw/ror",
+            "expiration": 86400,
+            "available": true,
+            "created_at": "2020-07-11T08:44:19.991Z"
+        }
+    ],
+    "paginator": {
+        "limit": 10,
+        "offset": 0,
+        "has_next": false
+    }
+}
 ```
 
 ## General APIs
@@ -141,6 +243,7 @@ curl -X GET \
   http://localhost:3000/api/v0/users
 ```
 
+#
 Create
 ```bash
 curl -X POST \
@@ -153,6 +256,7 @@ curl -X POST \
 "password": `string`, user password.   
 "admin": `boolean`, this user is admin or not.
 
+#
 Update
 ```bash
 curl -X PUT \

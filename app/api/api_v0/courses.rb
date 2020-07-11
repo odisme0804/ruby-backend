@@ -8,9 +8,12 @@ module ApiV0
         optional :offset, type: Integer, values: ->(v) { v >= 0},  default: 0
       end
       get "/" do
-        # TODO: add paging info
         admin_authenticate!
-        present Course.limit(params[:limit]).offset(params[:offset]), with: ApiV0::Entities::Course, type: :admin
+        coursesRsp = {
+            courses: Course.limit(params[:limit]).offset(params[:offset]),
+            paginator: {limit: params[:limit], offset: params[:offset], has_next: Course.count > params[:limit]*(params[:offset]+1)}
+        }
+        present coursesRsp, with: ApiV0::Entities::CoursesRsp, type: :admin
       end
 
       desc "Get course by id"
@@ -19,7 +22,10 @@ module ApiV0
       end
       get "/:id" do
         admin_authenticate!
-        present Course.find(params[:id]), with: ApiV0::Entities::Course, type: :admin
+        coursesRsp = {
+            course: Course.find(params[:id])
+        }
+        present coursesRsp, with: ApiV0::Entities::CourseRsp, type: :admin
       end
 
       desc "Create new course"

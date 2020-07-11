@@ -1,7 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 admin:
-  email: root@snapask.com
+  email: root@gmail.com
   password_digest: "$2a$12$ujJ1eEWsaujfLUAU/F3z3u2m2Kl07xGXyre4UHXvPRy42NHUpxxIe" # root
   admin: true
 
