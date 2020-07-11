@@ -22,7 +22,7 @@ module ApiV0
       params do
         requires :topic, values: ->(v) { v.length <= 20 }, type: String, allow_blank: false
         requires :description, values: ->(v) { v.length <= 20 }, type: String, allow_blank: false
-        requires :price, type: Float, allow_blank: false
+        requires :price, type: Float, values: ->(v) { v >= 0.0 }, allow_blank: false
         requires :currency, type: Symbol, values: [:NTD, :USD, :EUR], allow_blank: false
         requires :category, type: String, allow_blank: false
         requires :url, type: String, allow_blank: false
@@ -100,32 +100,26 @@ module ApiV0
         if params[:available]
           records = records.where("expired_at >= ?", Time.now.utc)
         end
-
-        present records.map { |obj| obj.course }, with: ApiV0::Entities::Course
-      end
-    end
-  end
-end
-
-# /users/:id/courses
-module ApiV0
-  class Courses < Grape::API
-    resource :users do
-      get ":id/courses" do
-        admin_authenticate!
-        params do
-          optional :available, type: Boolean
-          optional :category, type: String
-        end
-        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: params[:id])
-        if params[:category]
-          records = records.where("courses.category = ?", params[:category])
-        end
-        if params[:available]
-          records = records.where("expired_at >= ?", Time.now.utc)
-        end
         
-        present records.map { |obj| obj.course }, with: ApiV0::Entities::Course, type: :admin
+        # TODO: fix the style
+        ret = []
+        records.each do |obj|
+            purchasedCourse = {
+                id: obj.course.id,
+                topic: obj.course.topic,
+                description: obj.course.description,
+                price: obj.course.price,
+                currency: obj.course.currency,
+                category: obj.course.category,
+                url: obj.course.url,
+                expiration: obj.course.expiration,
+                pay_by: obj.pay_by,
+                available: obj.course.available,
+                created_at: obj.course.created_at,
+            }
+            ret.push(purchasedCourse)
+        end
+        present ret, with: ApiV0::Entities::PurchasedCourse
       end
     end
   end
