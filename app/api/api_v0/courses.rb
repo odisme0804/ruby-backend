@@ -3,10 +3,14 @@ module ApiV0
   class Courses < Grape::API
     resource :courses do
       desc "Get courses"
+      params do
+        optional :limit, type: Integer, values: ->(v) { v > 0 && v < 50 },  default: 10
+        optional :offset, type: Integer, values: ->(v) { v >= 0},  default: 0
+      end
       get "/" do
-        # TODO: paginator
+        # TODO: add paging info
         admin_authenticate!
-        present Course.all, with: ApiV0::Entities::Course, type: :admin
+        present Course.limit(params[:limit]).offset(params[:offset]), with: ApiV0::Entities::Course, type: :admin
       end
 
       desc "Get course by id"
