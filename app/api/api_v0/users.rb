@@ -3,8 +3,9 @@ module ApiV0
     resource :users do
       desc "List users"
       get "/" do
-        admin_authenticate!
-        present User.all, with: ApiV0::Entities::Course, type: :admin
+        # uncomment below line for admin authentiacation
+        # admin_authenticate!
+        present User.all, with: ApiV0::Entities::User, type: :admin
       end
 
       desc "Create new user"
@@ -14,10 +15,11 @@ module ApiV0
         requires :admin, type: Boolean
       end
       post "/" do
-        admin_authenticate!
+        # uncomment below line for admin authentiacation
+        # admin_authenticate!
         user = User.new(declared(params))
         if user.save
-          present user, with: ApiV0::Entities::Course, type: :admin
+          present user, with: ApiV0::Entities::User, type: :admin
         else
           raise StandardError, $!
         end
@@ -31,9 +33,11 @@ module ApiV0
         requires :admin, type: Boolean
       end
       put "/:id" do
+        # uncomment below line for admin authentiacation
+        # admin_authenticate!
         user = User.find(params[:id])
         if user.update(declared(params))
-          present user, with: ApiV0::Entities::Course, type: :admin
+          present user, with: ApiV0::Entities::User, type: :admin
         else
           raise StandardError, $!
         end
