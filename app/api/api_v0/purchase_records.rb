@@ -32,7 +32,7 @@ module ApiV0
             :user_id => current_user.id, :course_id => params[:id],
             :pay_by => params[:pay_by], :expired_at => Time.now.utc + course.expiration)
           if newPurchase.save
-            return newPurchase
+            status 204
           else
             raise StandardError, $!
           end

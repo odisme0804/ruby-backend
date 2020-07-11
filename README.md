@@ -27,7 +27,7 @@ curl -X POST \
 and you'll get the response like below
 ```javascript
 {
-  "token":"...eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MTM1MTM4NjgwLCJl...",
+  "token":"...your-token...",
   "exp":"2006-01-02T15:04:05Z"
 }
 ```
@@ -55,8 +55,15 @@ curl -X POST \
   }
 '
 ```
-the constrain of each parameter please check:
-/app/api/api_v0/courses.rb#20
+#### parameters:
+`topic`: string, must in the range of 1~20 words  
+`description`: string,  must in the range of 1~20 words  
+`price`: float, must greater than or equal to 0  
+`currency`: enum, currently only support NTD, USD or EUR  
+`category`: string, can't be blank  
+`url`: url, can't be blank  
+`expiration`: int, the course available window in secound after purchasing, must in the range of 86400 to 86400*30  
+`available`: boolean, the course is available or not
 
 Update
 ```bash
@@ -76,8 +83,8 @@ curl -X PUT \
   }
 '
 ```
-the constrain of each parameter please check:
-/app/api/api_v0/courses.rb#41
+#### parameters: 
+same as Create api
 
 Delete
 ```bash
@@ -101,4 +108,24 @@ curl -X GET \
   http://localhost:3000/api/v0/courses \
   -H 'authorization: your-token' \
   -H 'content-type: application/json'
+```
+
+## General APIs
+### Get purchased records
+```bash
+curl -X GET \
+  http://localhost:3000/api/v0/user/courses \
+  -H 'authorization: your-token'
+```
+#### query parameters:
+`available`: true/false, true to show the courses which are still available for current user 
+`category`: string, filter by the specific category name
+
+### Purchase a course
+```bash
+curl -X POST \
+  http://localhost:3000/api/v0/user/purchase-courses/<course_id> \
+  -H 'authorization: your-token' \
+  -H 'content-type: application/json' \
+  -d '{"pay_by": "the_way_you_pay_the_bill"}'
 ```
