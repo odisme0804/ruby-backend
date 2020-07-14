@@ -11,7 +11,11 @@ module ApiV0
         admin_authenticate!
         coursesRsp = {
             courses: Course.limit(params[:limit]).offset(params[:offset]),
-            paginator: {limit: params[:limit], offset: params[:offset], has_next: Course.count > params[:limit]*(params[:offset]+1)}
+            paginator: {
+              limit: params[:limit], 
+              offset: params[:offset], 
+              has_next: Course.count > params[:limit]*(params[:offset]+1)
+            }
         }
         present coursesRsp, with: ApiV0::Entities::CoursesRsp, type: :admin
       end
@@ -93,29 +97,44 @@ end
 module ApiV0
   class Courses < Grape::API
     resource :user do
+      params do
+        optional :available, type: Boolean
+        optional :category, type: String
+        optional :limit, type: Integer, values: ->(v) { v > 0 && v < 50 }, default: 10
+        optional :offset, type: Integer, values: ->(v) { v >= 0}, default: 0
+      end
       get "/courses" do
         authenticate!
         unless current_user
           status 403
           return { error: 'forbidden' }
         end
-        params do
-          optional :available, type: Boolean
-          optional :category, type: String
-        end
-        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id)
+        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id).limit(params[:limit]).offset(params[:offset])
+        # TODO: fix the style
+        recordsCount = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id)
         if params[:category]
           records = records.where("courses.category = ?", params[:category])
+          recordsCount = recordsCount.where("courses.category = ?", params[:category])
         end
         if params[:available]
           records = records.where("expired_at >= ?", Time.now.utc)
+          recordsCount = recordsCount.where("expired_at >= ?", Time.now.utc)
         end
         
+        purchasedCoursesRsp = {
+          paginator: {
+            limit: params[:limit], 
+            offset: params[:offset], 
+            has_next: recordsCount.count > params[:limit]*(params[:offset]+1)
+          }
+      }
+
         # TODO: fix the style
-        ret = []
+        purchasedCourses = []
         records.each do |obj|
             purchasedCourse = {
-                id: obj.course.id,
+                id: obj.id,
+                course_id: obj.course.id,
                 topic: obj.course.topic,
                 description: obj.course.description,
                 price: obj.course.price,
@@ -127,9 +146,11 @@ module ApiV0
                 available: obj.course.available,
                 created_at: obj.course.created_at,
             }
-            ret.push(purchasedCourse)
+            purchasedCourses.push(purchasedCourse)
         end
-        present ret, with: ApiV0::Entities::PurchasedCourse
+        purchasedCoursesRsp[:purchased_courses] = purchasedCourses
+
+        present purchasedCoursesRsp, with: ApiV0::Entities::PurchasedCoursesRsp
       end
     end
   end
