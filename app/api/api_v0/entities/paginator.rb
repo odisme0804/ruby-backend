@@ -1,9 +1,9 @@
 module ApiV0
   module Entities
     class Paginator < Entities::Base
-      expose :limit
-      expose :offset
-      expose :has_next
+      expose :page
+      expose :per_page
+      expose :total_page
     end
   end
 end

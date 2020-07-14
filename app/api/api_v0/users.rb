@@ -53,6 +53,7 @@ module ApiV0
         if user
           token = JsonWebToken.encode(id: user.id)
           loginRsp = { token: token, exp: 24.hours.from_now}
+          status 200
           present loginRsp, with: ApiV0::Entities::LoginRsp
         else
           raise LoginAuthorizationError

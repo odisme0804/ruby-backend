@@ -4,14 +4,19 @@ module ApiV0
     resource :courses do
       desc "Get courses"
       params do
-        optional :limit, type: Integer, values: ->(v) { v > 0 && v < 50 },  default: 10
-        optional :offset, type: Integer, values: ->(v) { v >= 0},  default: 0
+        optional :page, type: Integer, values: ->(v) { v > 0},  default: 1
+        optional :per_page, type: Integer, values: ->(v) { v > 0 && v < 50 },  default: 10
       end
       get "/" do
         admin_authenticate!
+        offset = (params[:page]-1) * params[:per_page]
         coursesRsp = {
-            courses: Course.limit(params[:limit]).offset(params[:offset]),
-            paginator: {limit: params[:limit], offset: params[:offset], has_next: Course.count > params[:limit]*(params[:offset]+1)}
+            courses: Course.limit(params[:per_page]).offset(offset),
+            paginator: {
+              page: params[:page], 
+              per_page: params[:per_page], 
+              total_page: (Course.count / params[:per_page].to_f).ceil()
+            }
         }
         present coursesRsp, with: ApiV0::Entities::CoursesRsp, type: :admin
       end
@@ -93,29 +98,45 @@ end
 module ApiV0
   class Courses < Grape::API
     resource :user do
+      params do
+        optional :available, type: Boolean
+        optional :category, type: String
+        optional :page, type: Integer, values: ->(v) { v > 0},  default: 1
+        optional :per_page, type: Integer, values: ->(v) { v > 0 && v < 50 },  default: 10
+      end
       get "/courses" do
         authenticate!
         unless current_user
           status 403
           return { error: 'forbidden' }
         end
-        params do
-          optional :available, type: Boolean
-          optional :category, type: String
-        end
-        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id)
+        offset = (params[:page]-1) * params[:per_page]
+        records = PurchaseRecord.joins(:course).includes(:course).where(user_id: current_user.id).limit(params[:per_page]).offset(offset)
+        # TODO: fix the style
+        allRecordsCount = PurchaseRecord.joins(:course).includes(:course)
         if params[:category]
           records = records.where("courses.category = ?", params[:category])
+          allRecordsCount = allRecordsCount.where("courses.category = ?", params[:category])
         end
         if params[:available]
           records = records.where("expired_at >= ?", Time.now.utc)
+          allRecordsCount = allRecordsCount.where("expired_at >= ?", Time.now.utc)
         end
         
+        purchasedCoursesRsp = {
+          paginator: {
+            page: params[:page], 
+            per_page: params[:per_page], 
+            total_page: (allRecordsCount.count / params[:per_page].to_f).ceil()
+          }
+        }
+
         # TODO: fix the style
-        ret = []
+        purchasedCourses = []
         records.each do |obj|
             purchasedCourse = {
-                id: obj.course.id,
+                id: obj.id,
+                course_id: obj.course.id,
                 topic: obj.course.topic,
                 description: obj.course.description,
                 price: obj.course.price,
@@ -127,9 +148,11 @@ module ApiV0
                 available: obj.course.available,
                 created_at: obj.course.created_at,
             }
-            ret.push(purchasedCourse)
+            purchasedCourses.push(purchasedCourse)
         end
-        present ret, with: ApiV0::Entities::PurchasedCourse
+        purchasedCoursesRsp[:purchased_courses] = purchasedCourses
+
+        present purchasedCoursesRsp, with: ApiV0::Entities::PurchasedCoursesRsp
       end
     end
   end
