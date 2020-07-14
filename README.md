@@ -148,10 +148,10 @@ curl -X GET \
   -H 'content-type: application/json'
 ```
 #### query parameters:
-"limit": `int`, for paging, must between 1 to 50, default 10.  
-"offset": `int`, for paging, can't be negative, default 0.  
+"page": `int`, for paging, can't be negative, default 1.  
+"per_page": `int`, for paging, must between 1 to 50, default 10.  
 
-return value
+#### return value:
 ```javascript
 {
     "courses": [
@@ -167,47 +167,13 @@ return value
             "available": true,
             "created_at": "2020-07-11T08:44:19.991Z"
         },
-        {
-            "id": 520386015,
-            "topic": "what is fashion",
-            "description": "what is fashion and how to be a fashionable people",
-            "price": 5,
-            "currency": "EUR",
-            "category": "fashion",
-            "url": "https://course_url.com.tw/ror",
-            "expiration": 86400,
-            "available": true,
-            "created_at": "2020-07-11T08:44:19.991Z"
-        },
-        {
-            "id": 698591932,
-            "topic": "chinese-101",
-            "description": "how to say chinese",
-            "price": 9.99,
-            "currency": "USD",
-            "category": "foreign_language",
-            "url": "https://course_url.com.tw/ruby",
-            "expiration": 3600,
-            "available": true,
-            "created_at": "2020-07-11T08:44:19.991Z"
-        },
-        {
-            "id": 878314071,
-            "topic": "ruby on rails",
-            "description": "ror tutorial",
-            "price": 200,
-            "currency": "NTD",
-            "category": "computer_science",
-            "url": "https://course_url.com.tw/ror",
-            "expiration": 86400,
-            "available": true,
-            "created_at": "2020-07-11T08:44:19.991Z"
-        }
+        ...
     ],
+    // paging info
     "paginator": {
-        "limit": 10,
-        "offset": 0,
-        "has_next": false
+        "page": 1,
+        "per_page": 3,
+        "total_page": 2
     }
 }
 ```
@@ -221,7 +187,37 @@ curl -X GET \
 ```
 #### query parameters:
 "available": `boolean`, true to show the courses which are still available for current user.  
-"category": `string`, filter by the specific category name.
+"category": `string`, filter by the specific category name.  
+"page": `int`, for paging, can't be negative, default 1.  
+"per_page": `int`, for paging, must between 1 to 50, default 10.  
+
+#### return value:
+```javascript
+{
+    "purchased_courses": [
+        {
+            "id": 238762669,
+            "course_id": 207281424,
+            "topic": "ruby",
+            "description": "ruby tutorial",
+            "price": 100,
+            "currency": "NTD",
+            "category": "computer_science",
+            "url": "https://course_url.com.tw/ruby",
+            "expiration": 86400,
+            "created_at": "2020-07-11T08:44:19.991Z",
+            "pay_by": "ibon"
+        },
+        ...
+    ],
+    // paging info
+    "paginator": {
+        "page": 1,
+        "per_page": 3,
+        "total_page": 2
+    }
+}
+```
 
 ### Purchase a course
 ```bash
@@ -229,7 +225,7 @@ curl -X POST \
   http://localhost:3000/api/v0/user/purchase-courses/<course_id> \
   -H 'authorization: your-token' \
   -H 'content-type: application/json' \
-  -d '{"pay_by": "the_way_you_pay_the_bill"}'
+  -d '{"pay_by": "<the_way_you_pay_the_bill>"}'
 ```
 #### parameters:
 "pay_by": `enum`, currently only support `ibon`, `visa`, `apple_pay`, and `free`.  
